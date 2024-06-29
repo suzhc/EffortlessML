@@ -13,15 +13,14 @@ setup(
         description=DESCRIPTION,
         long_description=LONG_DESCRIPTION,
         packages=find_packages(),
-        install_requires=['scikit-learn', 'xgboost'],
+        install_requires=['scikit-learn', 'xgboost', 'pandas', 'numpy', 'seaborn', 'matplotlib'],
         
         keywords=['python', 'machine learning'],
         classifiers= [
             "Development Status :: 3 - Alpha",
             "Intended Audience :: Education",
-            "Programming Language :: Python :: 2",
             "Programming Language :: Python :: 3",
-            "Operating System :: MacOS :: MacOS X",
             "Operating System :: Microsoft :: Windows",
-        ]
+        ],
+        python_requires=">=3.8",
 )
