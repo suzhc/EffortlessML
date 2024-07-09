@@ -18,7 +18,6 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
-from xgboost import XGBClassifier
 from sklearn.metrics import (
     accuracy_score,
     precision_score,
@@ -76,8 +75,7 @@ class ExpML:
             "rf": RandomForestClassifier(n_estimators=100, random_state=RANDOM_STATE),
             "gb": GradientBoostingClassifier(n_estimators=100, random_state=RANDOM_STATE),
             "dt": DecisionTreeClassifier(random_state=RANDOM_STATE),
-            "knn": KNeighborsClassifier(n_neighbors=5),
-            "xgb": XGBClassifier()
+            "knn": KNeighborsClassifier(n_neighbors=5)
         }
         return model_dict[model_name]
 

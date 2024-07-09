@@ -1,8 +1,13 @@
+import os
+
+import pkg_resources
 from setuptools import setup, find_packages
 
 VERSION = '0.0.1' 
-DESCRIPTION = 'EffortlessML'
-LONG_DESCRIPTION = 'EffortlessML'
+DESCRIPTION = 'EffortlessML, Simplify your Machine Learning analysis'
+
+with open('README.md') as f:
+    LONG_DESCRIPTION = f.read()
 
 # Setting up
 setup(
@@ -12,8 +17,15 @@ setup(
         author_email="suzhao10086@gmail.com",
         description=DESCRIPTION,
         long_description=LONG_DESCRIPTION,
-        packages=find_packages(),
-        install_requires=['scikit-learn', 'xgboost', 'pandas', 'numpy', 'seaborn', 'matplotlib'],
+        packages=find_packages(exclude=["tests*"]),
+        python_requires=">=3.10",
+        install_requires=[
+            str(r)
+            for r in pkg_resources.parse_requirements(
+                open(os.path.join(os.path.dirname(__file__), "requirements.txt"))
+            )
+        ],
+        extra_require={'dev': ['pytest']},
         
         keywords=['python', 'machine learning'],
         classifiers= [
@@ -21,5 +33,4 @@ setup(
             "Programming Language :: Python :: 3",
             "Operating System :: OS Independent",
         ],
-        python_requires=">=3.8",
 )

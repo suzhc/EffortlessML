@@ -1,9 +1,0 @@
-README.md
-setup.py
-EffortlessML/__init__.py
-EffortlessML/exp.py
-EffortlessML.egg-info/PKG-INFO
-EffortlessML.egg-info/SOURCES.txt
-EffortlessML.egg-info/dependency_links.txt
-EffortlessML.egg-info/requires.txt
-EffortlessML.egg-info/top_level.txt
