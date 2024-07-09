@@ -18,9 +18,8 @@ setup(
         keywords=['python', 'machine learning'],
         classifiers= [
             "Development Status :: 3 - Alpha",
-            "Intended Audience :: Education",
             "Programming Language :: Python :: 3",
-            "Operating System :: Microsoft :: Windows",
+            "Operating System :: OS Independent",
         ],
         python_requires=">=3.8",
 )
