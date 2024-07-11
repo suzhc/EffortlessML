@@ -17,7 +17,7 @@ setup(
         author_email="suzhao10086@gmail.com",
         description=DESCRIPTION,
         long_description=LONG_DESCRIPTION,
-        packages=find_packages(exclude=["tests*"]),
+        packages=find_packages(exclude=["test*"]),
         python_requires=">=3.10",
         install_requires=[
             str(r)
