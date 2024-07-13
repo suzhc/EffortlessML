@@ -41,7 +41,7 @@ class ExpML:
         X: pd.DataFrame,
         y: pd.DataFrame,
         model_name: str,
-        feature_selector_name: str,
+        feature_selector_name: str = 'all',
         n_folds: int = 5,
         keep_features: int = 20,
     ):
@@ -114,13 +114,21 @@ class ExpML:
             X_train, y_train = X.iloc[train_idx], y.iloc[train_idx]
             X_val, y_val = X.iloc[valid_idx], y.iloc[valid_idx]
 
-            pipeline = Pipeline(
-                [
-                    ("scalar", StandardScaler()),
-                    ("feature_selector", self.feature_selector),
-                    ("classifier", self.model),  # Model training step
-                ]
-            )
+            if self.feature_selector:
+                pipeline = Pipeline(
+                    [
+                        ("scalar", StandardScaler()),
+                        ("feature_selector", self.feature_selector),
+                        ("classifier", self.model),  # Model training step
+                    ]
+                )
+            else:
+                pipeline = Pipeline(
+                    [
+                        ("scalar", StandardScaler()),
+                        ("classifier", self.model),  # Model training step
+                    ]
+                )
             pipeline.fit(X_train, y_train)
 
             y_pred = pipeline.predict(X_val)
