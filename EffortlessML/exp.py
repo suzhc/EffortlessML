@@ -30,6 +30,8 @@ from sklearn.metrics import (
 )
 from sklearn.pipeline import Pipeline
 
+import warnings
+warnings.filterwarnings('ignore')
 
 
 RANDOM_STATE = 42
