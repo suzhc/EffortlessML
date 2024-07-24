@@ -4,7 +4,7 @@ import h2o
 import pandas as pd
 
 
-class AutoML():
+class AutoML:
     def __init__(self, df_data: pd.DataFrame, y_col: str, x_cols: list[str]):
         self.df_data = df_data
         self.y_col = y_col
@@ -19,7 +19,7 @@ class PycaretAutoML(AutoML):
         super().__init__(df_data, y_col, x_cols)
 
     def generate_report(self):
-        s = setup(self.df_data, target = self.y_col, session_id = 123)
+        s = setup(self.df_data, target=self.y_col, session_id=123)
         best = compare_models()
         return best
 
