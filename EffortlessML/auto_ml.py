@@ -22,6 +22,22 @@ class PycaretAutoML(AutoML):
             data=df, target=self.y_col, train_size=0.8, session_id=123, verbose=False
         )
         self.best_model = caret_c.compare_models(fold=5, sort='f1', verbose=False)
+    
+    def generate_report(self):
+        lb = caret_c.get_leaderboard(verbose=False)
+        lb = lb.sort_values(by='F1', ascending=False)\
+                .reset_index()\
+                .drop(columns='Index')
+        return lb
+    
+    def plot_feature_importance(self):
+        caret_c.plot_model(self.best_model, plot='feature')
+    
+    def plot_shap(self):
+        caret_c.interpret_model(self.best_model)
+    
+    def tune_model(self):
+        self.best_model = caret_c.tune_model(self.best_model, verbose=False)
 
 
 class H2OAutoML(AutoML):
