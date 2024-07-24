@@ -1,4 +1,4 @@
-from pycaret.classification import *
+import pycaret.classification as caret_c
 from h2o.automl import H2OAutoML
 import h2o
 import pandas as pd
@@ -17,11 +17,11 @@ class AutoML:
 class PycaretAutoML(AutoML):
     def __init__(self, df_data: pd.DataFrame, y_col: str, x_cols: list[str]):
         super().__init__(df_data, y_col, x_cols)
-
-    def generate_report(self):
-        s = setup(self.df_data, target=self.y_col, session_id=123)
-        best = compare_models()
-        return best
+        df = self.df_data[self.x_cols + [self.y_col]]
+        self.s = caret_c.setup(
+            data=df, target=self.y_col, train_size=0.8, session_id=123, verbose=False
+        )
+        self.best_model = caret_c.compare_models(fold=5, sort='f1', verbose=False)
 
 
 class H2OAutoML(AutoML):
