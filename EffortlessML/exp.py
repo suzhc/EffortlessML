@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split, StratifiedKFold
 from sklearn.feature_selection import (
@@ -30,6 +31,8 @@ from sklearn.metrics import (
 )
 from sklearn.pipeline import Pipeline
 
+from EffortlessML.utils import plot
+
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -43,19 +46,15 @@ class ExpML:
         X: pd.DataFrame,
         y: pd.DataFrame,
         model_name: str,
-        feature_selector_name: str = 'all',
         n_folds: int = 5,
-        keep_features: int = 20,
     ):
         self.X = X
         self.y = y
-        self.keep_features = keep_features
         self.model = self.__get_model(model_name)
-        self.feature_selector = self.__get_feature_selector(feature_selector_name)
         print("----------------")
         print(
-            f"Label: {y.name}, Model: {model_name}"
-            f", Selector: {feature_selector_name}, Folds: {n_folds}"
+            f"Label: {y.name}, Model: {model_name}",
+            f"Folds: {n_folds}"
         )
         print(
             "Features count", len(X.columns)
@@ -63,7 +62,10 @@ class ExpML:
 
         self.run_exp(n_folds=n_folds)
 
-    def __get_model(self, model_name: str):
+    def __get_model(self, model_name: str | BaseEstimator):
+        if isinstance(model_name, BaseEstimator):
+            return model_name
+        
         model_dict = {
             "svm": svm.SVC(kernel="rbf", probability=True),
             "mlp": MLPClassifier(
@@ -80,17 +82,6 @@ class ExpML:
             "knn": KNeighborsClassifier(n_neighbors=5)
         }
         return model_dict[model_name]
-
-    def __get_feature_selector(self, selector_name: str):
-        kn = KNeighborsClassifier(n_neighbors=3)
-        selector_dict = {
-            "all": None,
-            "fvalue": SelectKBest(f_classif, k=self.keep_features),
-            "sequential": SequentialFeatureSelector(
-                kn, n_features_to_select=self.keep_features
-            ),
-        }
-        return selector_dict[selector_name]
 
     def run_exp(self, n_folds: int):
         X = self.X
@@ -116,21 +107,12 @@ class ExpML:
             X_train, y_train = X.iloc[train_idx], y.iloc[train_idx]
             X_val, y_val = X.iloc[valid_idx], y.iloc[valid_idx]
 
-            if self.feature_selector:
-                pipeline = Pipeline(
-                    [
-                        ("scalar", StandardScaler()),
-                        ("feature_selector", self.feature_selector),
-                        ("classifier", self.model),  # Model training step
-                    ]
-                )
-            else:
-                pipeline = Pipeline(
-                    [
-                        ("scalar", StandardScaler()),
-                        ("classifier", self.model),  # Model training step
-                    ]
-                )
+            pipeline = Pipeline(
+                [
+                    ("scalar", StandardScaler()),
+                    ("classifier", self.model),  # Model training step
+                ]
+            )
             pipeline.fit(X_train, y_train)
 
             y_pred = pipeline.predict(X_val)
@@ -177,26 +159,11 @@ class ExpML:
             "precision": round(self.prec, 3),
             "recall": round(self.recall, 3),
             "f1": round(self.f1, 3),
+            "auc": round(self.auc, 3)
         }
 
     def plot_roc(self) -> None:
-        plt.figure()
-        for fpr, tpr, roc_auc in zip(self.fpr_list, self.tpr_list, self.auc_list):
-            plt.plot(fpr, tpr, label="ROC curve (area = %0.2f)" % roc_auc)
-        plt.plot([0, 1], [0, 1], "k--")
-        plt.xlim([0.0, 1.0])
-        plt.ylim([0.0, 1.05])
-        plt.xlabel("False Positive Rate")
-        plt.ylabel("True Positive Rate")
-        plt.title("Receiver Operating Characteristic")
-        plt.legend(loc="lower right")
-        plt.show()
+        plot.plot_cv_roc(self.fpr_list, self.tpr_list, self.auc_list)
 
     def plot_cm(self) -> None:
-        cm = np.sum(self.cm_list, axis=0)
-        plt.figure(figsize=(4, 4))
-        sns.heatmap(cm, annot=True, fmt="d", cmap="Blues")
-        plt.title("Confusion Matrix")
-        plt.xlabel("Predicted")
-        plt.ylabel("Actual")
-        plt.show()
+        plot.plot_cv_cm(self.cm_list)
